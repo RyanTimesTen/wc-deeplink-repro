@@ -1,59 +1,23 @@
-import WalletConnect from '@walletconnect/client';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
 import styles from '../styles/Home.module.css';
 
 const Home: NextPage = () => {
-  const [address, setAddress] = useState('');
-
-  const client = new WalletConnect({
-    bridge: 'https://bridge.walletconnect.org',
-  });
-
-  const handleConnect = async () => {
-    await client.createSession();
-
-    const deepLink = `https://rnbwapp.com/wc?uri=${encodeURIComponent(
-      client.uri ?? '',
-    )}`;
-    window.location.href = deepLink;
-
-    return new Promise((resolve, reject) => {
-      // ...then once the QR is scanned, this callback will run
-      client.on('connect', (error: Error | null, payload: any) => {
-        if (error) {
-          reject(error);
-        }
-
-        const [accountPublicAddress] = payload.params[0].accounts;
-        resolve(accountPublicAddress);
-        setAddress(accountPublicAddress);
-      });
-
-      client.on('disconnect', (error: Error | null, payload: any) => {
-        reject(error || payload.params[0].message);
-      });
-    });
+  const redirect = () => {
+    window.location.href = 'https://rnbwapp.com';
   };
 
-  const handleSign = async () => {
-    const response = await fetch(
-      'https://registry.walletconnect.org/data/wallets.json',
-    );
-    const data = await response.json();
-    console.log({ data });
+  const redirectWithWork = async () => {
+    // const response = await fetch(
+    //   'https://registry.walletconnect.org/data/wallets.json',
+    // );
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(undefined);
+      }, 1000);
+    });
 
-    const deepLink = `https://rnbwapp.com/wc?uri=${encodeURIComponent(
-      client.uri ?? '',
-    )}`;
-    window.location.assign(deepLink);
-
-    try {
-      await client.signPersonalMessage(['example', address]);
-    } catch (e) {
-      console.log(e);
-    }
+    window.location.assign('https://rnbwapp.com');
   };
 
   return (
@@ -64,11 +28,9 @@ const Home: NextPage = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
 
-      <div>address: {address}</div>
-
       <main className={styles.main}>
-        <button onClick={handleConnect}>Connect</button>
-        <button onClick={handleSign}>Sign</button>
+        <button onClick={redirect}>bare redirect</button>
+        <button onClick={redirectWithWork}>redirect with work</button>
       </main>
     </div>
   );

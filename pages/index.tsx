@@ -7,14 +7,17 @@ const Home: NextPage = () => {
     window.location.href = 'https://rnbwapp.com';
   };
 
-  const redirectWithWork = async () => {
-    // const response = await fetch(
-    //   'https://registry.walletconnect.org/data/wallets.json',
-    // );
+  const redirectAfterFetch = async () => {
+    await fetch('https://registry.walletconnect.org/data/wallets.json');
+
+    window.location.assign('https://rnbwapp.com');
+  };
+
+  const redirectAfterTimeout = async (timeout: number) => {
     await new Promise((resolve) => {
       setTimeout(() => {
         resolve(undefined);
-      }, 1000);
+      }, timeout);
     });
 
     window.location.assign('https://rnbwapp.com');
@@ -29,8 +32,14 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <button onClick={redirect}>bare redirect</button>
-        <button onClick={redirectWithWork}>redirect with work</button>
+        <button onClick={redirect}>redirect</button>
+        <button onClick={redirectAfterFetch}>redirect (fetch)</button>
+        <button onClick={() => redirectAfterTimeout(990)}>
+          redirect (timeout 990ms)
+        </button>
+        <button onClick={() => redirectAfterTimeout(1000)}>
+          redirect (timeout 1000ms)
+        </button>
       </main>
     </div>
   );

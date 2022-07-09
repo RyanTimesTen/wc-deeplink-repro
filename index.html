@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <title>Universal Link Repro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      html,
+      body {
+        padding: 0;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+          Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      main {
+        min-height: 100vh;
+        padding: 4rem 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <main>
+        <button class="redirect">redirect</button>
+        <button class="redirectAfterFetch">redirect (fetch)</button>
+        <button class="redirectAfterTimeout990">
+          redirect (timeout 990ms)
+        </button>
+        <button class="redirectAfterTimeout1000">
+          redirect (timeout 1000ms)
+        </button>
+      </main>
+    </div>
+  </body>
+  <script type="module">
+    const redirect = () => {
+      window.location.href = 'https://rnbwapp.com';
+    };
+
+    const redirectAfterFetch = async () => {
+      await fetch('https://registry.walletconnect.org/data/wallets.json');
+
+      window.location.assign('https://rnbwapp.com');
+    };
+
+    const redirectAfterTimeout = (timeout) => async () => {
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve(undefined);
+        }, timeout);
+      });
+
+      window.location.assign('https://rnbwapp.com');
+    };
+
+    document.querySelector('.redirect').addEventListener('click', redirect);
+    document
+      .querySelector('.redirectAfterFetch')
+      .addEventListener('click', redirectAfterFetch);
+    document
+      .querySelector('.redirectAfterTimeout990')
+      .addEventListener('click', redirectAfterTimeout(990));
+    document
+      .querySelector('.redirectAfterTimeout1000')
+      .addEventListener('click', redirectAfterTimeout(1000));
+  </script>
+</html>
